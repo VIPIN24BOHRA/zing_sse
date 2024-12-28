@@ -11,6 +11,8 @@ app.use(cors());
 const _dbUpdate = new DbUpdateStatus();
 _dbUpdate._init(db);
 
+console.log("new changes for allow origin all");
+
 app.get("/order", (req, res) => {
   res.send({ msg: "this is msg" });
 });
@@ -18,7 +20,7 @@ app.get("/order", (req, res) => {
 app.get("/sse", (req, res) => {
   // Set headers for SSE
 
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // Replace with the allowed origin
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Replace with the allowed origin
   res.setHeader("Access-Control-Allow-Methods", "GET");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
@@ -37,7 +39,8 @@ app.get("/sse", (req, res) => {
   });
 });
 
-const PORT = 3200;
+const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
