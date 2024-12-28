@@ -18,6 +18,10 @@ app.get("/order", (req, res) => {
   res.send({ msg: "this is msg" });
 });
 
+app.get("/webhook/rider", (req, res) => {
+  res.send({ msg: "rider webhook is up and running" });
+});
+
 app.post("/webhook/rider", async (req, res) => {
   try {
     const { type, order_id, event, data } = req.body;
@@ -61,4 +65,3 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-
