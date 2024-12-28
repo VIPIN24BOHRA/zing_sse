@@ -2,11 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
-
 const { db } = require("./src/moules/db.js");
 const { DbUpdateStatus } = require("./src/moules/onUpdateStatus.js");
+const { deliveryBoyEventHandler } = require("./src/moules/deliveryBoy.js");
 
 app.use(cors());
+app.use(express.json());
 
 const _dbUpdate = new DbUpdateStatus();
 _dbUpdate._init(db);
@@ -15,6 +16,23 @@ console.log("new changes for allow origin all");
 
 app.get("/order", (req, res) => {
   res.send({ msg: "this is msg" });
+});
+
+app.post("/webhook/rider", async (req, res) => {
+  try {
+    const { type, order_id, event, data } = req.body;
+
+    const result = await deliveryBoyEventHandler(type, order_id, event, data);
+
+    res.status(200).json({
+      success: result,
+    });
+  } catch (e) {
+    console.error(e);
+    res
+      .status(500)
+      .json({ success: false, error: e.message || "Internal Server Error" });
+  }
 });
 
 app.get("/sse", (req, res) => {

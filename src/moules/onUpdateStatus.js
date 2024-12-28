@@ -1,21 +1,20 @@
 class DbUpdateStatus {
-  _ref;
+  _orderRef;
   _clients;
 
   _init(db) {
     console.log("this will be called only once");
-    this.ref = db.ref("/orders");
+    this._orderRef = db.ref("/orders");
     this._clients = [];
-    this.ref.on("child_changed", (snapshot) => {
+    this._orderRef.on("child_changed", (snapshot) => {
       try {
-        const data = snapshot.val();
-
         const changedData = snapshot.val();
         const changedKey = snapshot.key;
 
         const message = `data: ${changedKey}###${changedData.status}###${
           changedData?.deliveredAt ?? ""
-        }\n\n`;
+        }###${changedData?.deliveryBoy?.status ?? ""}\n\n`;
+        console.log(message);
 
         this._clients.forEach((client) => client.write(message));
       } catch (err) {
