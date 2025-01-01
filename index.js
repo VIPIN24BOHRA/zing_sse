@@ -25,6 +25,7 @@ app.get("/webhook/rider", (req, res) => {
 app.post("/webhook/rider", async (req, res) => {
   try {
     const { type, order_id, event, data } = req.body;
+    console.log(req.body);
 
     const result = await deliveryBoyEventHandler(type, order_id, event, data);
 
