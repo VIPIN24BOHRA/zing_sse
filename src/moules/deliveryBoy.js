@@ -5,7 +5,7 @@ const {
   updateOrderDelivered,
 } = require("./firebase");
 
-const deliveryBoyEventHandler = async (type, order_id, event, data) => {
+const deliveryBoyEventHandler = async (type, event, data) => {
   const deliveryBoyData = {
     rider_id: data.rider_id,
     name: data.rider_name,
@@ -14,7 +14,10 @@ const deliveryBoyEventHandler = async (type, order_id, event, data) => {
     last_updated_on: data.last_updated_on,
     status: event.toLowerCase(),
   };
-  console.log(deliveryBoyData);
+
+  const order_id = data.notes;
+
+  console.log(order_id, deliveryBoyData.status);
   if (type && type.toLowerCase() == "update") {
     switch (event.toLowerCase()) {
       case "accepted":
