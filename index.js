@@ -22,6 +22,26 @@ app.get("/webhook/rider", (req, res) => {
   res.send({ msg: "rider webhook is up and running" });
 });
 
+app.get("/webhook/piedge/rider", (req, res) => {
+  res.send({ msg: "rider webhook is up and running" });
+});
+
+app.post("/webhook/piedge/rider", async (req, res) => {
+  try {
+    const body = req.body;
+
+    console.log(body);
+    res.status(200).json({
+      success: true,
+    });
+  } catch (e) {
+    console.error(e);
+    res
+      .status(500)
+      .json({ success: false, error: e.message || "Internal Server Error" });
+  }
+});
+
 app.post("/webhook/rider", async (req, res) => {
   try {
     const { type, event, data } = req.body;
