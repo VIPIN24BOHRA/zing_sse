@@ -4,7 +4,10 @@ const app = express();
 require("dotenv").config();
 const { db } = require("./src/moules/db.js");
 const { DbUpdateStatus } = require("./src/moules/onUpdateStatus.js");
-const { deliveryBoyEventHandler } = require("./src/moules/deliveryBoy.js");
+const {
+  deliveryBoyEventHandler,
+  pidgeDeliveryBoyEventHandler,
+} = require("./src/moules/deliveryBoy.js");
 
 app.use(cors());
 app.use(express.json());
@@ -29,10 +32,10 @@ app.get("/webhook/piedge/rider", (req, res) => {
 app.post("/webhook/piedge/rider", async (req, res) => {
   try {
     const body = req.body;
+    const result = await pidgeDeliveryBoyEventHandler(body.data);
 
-    console.log(body);
     res.status(200).json({
-      success: true,
+      success: result,
     });
   } catch (e) {
     console.error(e);

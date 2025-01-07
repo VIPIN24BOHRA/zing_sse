@@ -48,4 +48,51 @@ const deliveryBoyEventHandler = async (type, event, data) => {
   return false;
 };
 
-module.exports = { deliveryBoyEventHandler };
+const pidgeDeliveryBoyEventHandler = async (data) => {
+  if (!data) return false;
+  const { reference_id, status, fulfillment } = data;
+  if (!reference_id && !status && status != "fulfilled" && !fulfillment)
+    return false;
+  const currentStatus = fulfillment.status;
+  const rider = fulfillment.rider;
+
+  const deliveryBoyData = {
+    rider_id: rider.id,
+    name: rider.name,
+    mobile: rider.mobile,
+    created_on: data.created_at,
+    last_updated_on: data.updated_at,
+    status: currentStatus.toLowerCase(),
+  };
+
+  console.log(reference_id, status, currentStatus, deliveryBoyData);
+
+  switch (currentStatus.toLowerCase()) {
+    case "out_for_pickup":
+      return updateDeliveryBoy(reference_id, deliveryBoyData);
+
+    case "reached_pickup":
+      return await updateDeliveryBoyStatus(
+        reference_id,
+        currentStatus.toLowerCase()
+      );
+
+    case "out_for_delivery":
+      return await updateOrderStatus(reference_id, "OUT FOR DELIVERY");
+
+    case "REACHED_DELIVERY":
+      "reached_delivery";
+      return await updateDeliveryBoyStatus(
+        reference_id,
+        currentStatus.toLowerCase()
+      );
+
+    case "delivered":
+      return await updateOrderDelivered(reference_id);
+
+    default:
+      return false;
+  }
+};
+
+module.exports = { deliveryBoyEventHandler, pidgeDeliveryBoyEventHandler };
