@@ -88,7 +88,6 @@ const sendPushNotification = async (userId, title, body) => {
 };
 
 module.exports = {
-  recentDeliveredOrder,
   updateDeliveryBoyStatus,
   updateDeliveryBoy,
   updateOrderStatus,
