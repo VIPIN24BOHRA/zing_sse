@@ -4,10 +4,7 @@ const app = express();
 require("dotenv").config();
 const { db } = require("./src/moules/db.js");
 const { DbUpdateStatus } = require("./src/moules/onUpdateStatus.js");
-const {
-  deliveryBoyEventHandler,
-  pidgeDeliveryBoyEventHandler,
-} = require("./src/moules/deliveryBoy.js");
+const { pidgeDeliveryBoyEventHandler } = require("./src/moules/deliveryBoy.js");
 
 app.use(cors());
 app.use(express.json());
@@ -34,23 +31,6 @@ app.post("/webhook/piedge/rider", async (req, res) => {
     const body = req.body;
     console.log(body);
     const result = await pidgeDeliveryBoyEventHandler(body.data);
-
-    res.status(200).json({
-      success: result,
-    });
-  } catch (e) {
-    console.error(e);
-    res
-      .status(500)
-      .json({ success: false, error: e.message || "Internal Server Error" });
-  }
-});
-
-app.post("/webhook/rider", async (req, res) => {
-  try {
-    const { type, event, data } = req.body;
-
-    const result = await deliveryBoyEventHandler(type, event, data);
 
     res.status(200).json({
       success: result,
