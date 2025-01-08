@@ -50,12 +50,19 @@ const deliveryBoyEventHandler = async (type, event, data) => {
 
 const pidgeDeliveryBoyEventHandler = async (data) => {
   if (!data) return false;
-  const { reference_id, status, fulfillment } = data;
-  if (!reference_id && !status && status != "fulfilled" && !fulfillment)
+  const { reference_id, status, fulfillment, dd_channel } = data;
+  if (
+    !reference_id &&
+    !status &&
+    status != "fulfilled" &&
+    !fulfillment &&
+    !dd_channel
+  )
     return false;
   const currentStatus = fulfillment.status;
   const rider = fulfillment.rider;
-  if (!rider) return false;
+  const orderId = dd_channel.order_id;
+  if (!rider && !orderId) return false;
 
   const deliveryBoyData = {
     rider_id: rider?.id,
@@ -66,30 +73,30 @@ const pidgeDeliveryBoyEventHandler = async (data) => {
     status: currentStatus.toLowerCase(),
   };
 
-  console.log(reference_id, status, currentStatus, deliveryBoyData);
+  console.log(reference_id, orderId, status, currentStatus, deliveryBoyData);
 
   switch (currentStatus.toLowerCase()) {
     case "out_for_pickup":
-      return updateDeliveryBoy(reference_id, deliveryBoyData);
+      return updateDeliveryBoy(orderId, deliveryBoyData);
 
     case "reached_pickup":
       return await updateDeliveryBoyStatus(
-        reference_id,
+        orderId,
         currentStatus.toLowerCase()
       );
 
     case "out_for_delivery":
-      return await updateOrderStatus(reference_id, "OUT FOR DELIVERY");
+      return await updateOrderStatus(orderId, "OUT FOR DELIVERY");
 
     case "REACHED_DELIVERY":
       "reached_delivery";
       return await updateDeliveryBoyStatus(
-        reference_id,
+        orderId,
         currentStatus.toLowerCase()
       );
 
     case "delivered":
-      return await updateOrderDelivered(reference_id);
+      return await updateOrderDelivered(orderId);
 
     default:
       return false;
