@@ -1,27 +1,4 @@
-const { db } = require("./db.js");
-async function recentDeliveredOrder(ts) {
-  try {
-    const snapshot = await db
-      .ref("/orders")
-      .orderByChild("deliveredAt")
-      .startAt(ts)
-      .endAt(Date.now())
-      .once("value");
-    if (snapshot.exists) {
-      Object.values(snapshot.val() ?? {}).forEach((order) => {
-        console.log(
-          order
-          //   new Date(order.deliveredAt).toLocaleString()
-        );
-      });
-      // send notification for only the delivered order
-    } else {
-      console.log("no data present");
-    }
-  } catch (err) {
-    console.log(err);
-  }
-}
+const { db, messaging } = require("./db.js");
 
 async function updateOrderStatus(orderId, status) {
   try {
@@ -69,10 +46,53 @@ async function updateOrderDelivered(orderId) {
   }
 }
 
+async function checkIfAlreadyRated(orderId) {
+  console.log("check if already rated");
+  try {
+    const snapshot = await db.ref(`/ratings/${orderId}`).once("value");
+    if (snapshot.exists()) {
+      return true;
+    } else return false;
+  } catch (err) {
+    console.log("error while checking already rated", err);
+    return false;
+  }
+}
+
+const sendPushNotification = async (userId, title, body) => {
+  try {
+    // Fetch user's FCM token
+    const userSnapshot = await db.ref(`/users/${userId}/token`).once("value");
+    const fcmToken = userSnapshot.val();
+
+    if (!fcmToken) {
+      console.log(`No FCM token for user ${userId}`);
+      return;
+    }
+
+    // Create notification payload
+    const payload = {
+      notification: {
+        title,
+        body,
+      },
+      token: fcmToken,
+    };
+
+    // Send notification using Firebase Messaging
+    await messaging.send(payload);
+    console.log(`Notification sent to user ${userId}`);
+  } catch (error) {
+    console.error(`Error sending notification to user ${userId}:`, error);
+  }
+};
+
 module.exports = {
   recentDeliveredOrder,
   updateDeliveryBoyStatus,
   updateDeliveryBoy,
   updateOrderStatus,
   updateOrderDelivered,
+  checkIfAlreadyRated,
+  sendPushNotification,
 };

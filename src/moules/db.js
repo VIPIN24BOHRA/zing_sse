@@ -9,5 +9,5 @@ admin.initializeApp({
 });
 
 const db = admin.database();
-
-module.exports = { db };
+const messaging = admin.messaging();
+module.exports = { db, messaging };
