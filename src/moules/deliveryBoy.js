@@ -55,11 +55,12 @@ const pidgeDeliveryBoyEventHandler = async (data) => {
     return false;
   const currentStatus = fulfillment.status;
   const rider = fulfillment.rider;
+  if (!rider) return false;
 
   const deliveryBoyData = {
-    rider_id: rider.id,
-    name: rider.name,
-    mobile: rider.mobile,
+    rider_id: rider?.id,
+    name: rider?.name,
+    mobile: rider?.mobile,
     created_on: data.created_at,
     last_updated_on: data.updated_at,
     status: currentStatus.toLowerCase(),
