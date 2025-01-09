@@ -50,19 +50,19 @@ const deliveryBoyEventHandler = async (type, event, data) => {
 
 const pidgeDeliveryBoyEventHandler = async (data) => {
   if (!data) return false;
-  const { reference_id, status, fulfillment, dd_channel } = data;
-  if (
-    !reference_id &&
-    !status &&
-    status != "fulfilled" &&
-    !fulfillment &&
-    !dd_channel
-  )
-    return false;
+  const { status, fulfillment, dd_channel } = data;
+
+  if (!status && !dd_channel) return false;
+  const orderId = dd_channel.order_id;
+
+  if (status == "pending") return await updateOrderStatus(orderId, "PENDING");
+
+  if (status != "fulfilled" && !fulfillment) return false;
+
   const currentStatus = fulfillment.status;
   const rider = fulfillment.rider;
-  const orderId = dd_channel.order_id;
-  if (!rider && !orderId) return false;
+
+  if (!rider && !orderId && !currentStatus) return false;
 
   const deliveryBoyData = {
     rider_id: rider?.id,
@@ -70,31 +70,30 @@ const pidgeDeliveryBoyEventHandler = async (data) => {
     mobile: rider?.mobile,
     created_on: data.created_at,
     last_updated_on: data.updated_at,
-    status: currentStatus.toLowerCase(),
+    status: currentStatus,
   };
 
-  console.log(reference_id, orderId, status, currentStatus, deliveryBoyData);
+  console.log(orderId, status, currentStatus, deliveryBoyData);
 
-  switch (currentStatus.toLowerCase()) {
-    case "out_for_pickup":
+  switch (currentStatus) {
+    case "CREATED":
+      return await updateDeliveryBoyStatus(orderId, currentStatus);
+    case "OUT_FOR_PICKUP":
       return updateDeliveryBoy(orderId, deliveryBoyData);
 
-    case "reached_pickup":
-      return await updateDeliveryBoyStatus(
-        orderId,
-        currentStatus.toLowerCase()
-      );
+    case "REACHED_PICKUP":
+      return await updateDeliveryBoyStatus(orderId, currentStatus);
 
-    case "out_for_delivery":
+    case "PICKED_UP":
+      return await updateDeliveryBoyStatus(orderId, currentStatus);
+
+    case "OUT_FOR_DELIVERY":
       return await updateOrderStatus(orderId, "OUT FOR DELIVERY");
 
-    case "reached_delivery":
-      return await updateDeliveryBoyStatus(
-        orderId,
-        currentStatus.toLowerCase()
-      );
+    case "REACHED_DELIVERY":
+      return await updateDeliveryBoyStatus(orderId, currentStatus);
 
-    case "delivered":
+    case "DELIVERED":
       return await updateOrderDelivered(orderId);
 
     default:
