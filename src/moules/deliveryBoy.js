@@ -88,8 +88,7 @@ const pidgeDeliveryBoyEventHandler = async (data) => {
     case "out_for_delivery":
       return await updateOrderStatus(orderId, "OUT FOR DELIVERY");
 
-    case "REACHED_DELIVERY":
-      "reached_delivery";
+    case "reached_delivery":
       return await updateDeliveryBoyStatus(
         orderId,
         currentStatus.toLowerCase()
