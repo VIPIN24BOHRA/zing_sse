@@ -51,6 +51,7 @@ const deliveryBoyEventHandler = async (type, event, data) => {
 const pidgeDeliveryBoyEventHandler = async (data) => {
   if (!data) return false;
   const { status, fulfillment, dd_channel } = data;
+  console.log(status, dd_channel);
 
   if (!status && !dd_channel) return false;
   const orderId = dd_channel.order_id;
@@ -73,7 +74,7 @@ const pidgeDeliveryBoyEventHandler = async (data) => {
     status: currentStatus,
   };
 
-  console.log(orderId, status, currentStatus, deliveryBoyData);
+  console.log(orderId, status, currentStatus, rider?.name);
 
   switch (currentStatus) {
     case "CREATED":

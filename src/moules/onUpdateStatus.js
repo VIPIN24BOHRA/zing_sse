@@ -13,7 +13,9 @@ class DbUpdateStatus {
 
         const message = `data: ${changedKey}###${changedData.status}###${
           changedData?.deliveredAt ?? ""
-        }###${changedData?.deliveryBoy?.status ?? ""}\n\n`;
+        }###${changedData?.deliveryBoy?.status ?? ""}###${
+          changedData?.deliveryBoy?.name ?? ""
+        }\n\n`;
         console.log(message);
 
         this._clients.forEach((client) => client.write(message));

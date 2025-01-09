@@ -29,7 +29,7 @@ app.get("/webhook/piedge/rider", (req, res) => {
 app.post("/webhook/piedge/rider", async (req, res) => {
   try {
     const body = req.body;
-    console.log(body);
+
     const result = await pidgeDeliveryBoyEventHandler(body);
 
     res.status(200).json({
