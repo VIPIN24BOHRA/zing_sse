@@ -56,7 +56,8 @@ const pidgeDeliveryBoyEventHandler = async (data) => {
   if (!status && !dd_channel) return false;
   const orderId = dd_channel.order_id;
 
-  if (status == "pending") return await updateOrderStatus(orderId, "PENDING");
+  if (status == "pending")
+    return await updateDeliveryBoyStatus(orderId, "PENDING", data.updated_at);
 
   if (status != "fulfilled" && !fulfillment) return false;
 
@@ -78,21 +79,37 @@ const pidgeDeliveryBoyEventHandler = async (data) => {
 
   switch (currentStatus) {
     case "CREATED":
-      return await updateDeliveryBoyStatus(orderId, currentStatus);
+      return await updateDeliveryBoyStatus(
+        orderId,
+        currentStatus,
+        data.updated_at
+      );
     case "OUT_FOR_PICKUP":
-      return updateDeliveryBoy(orderId, deliveryBoyData);
+      return updateDeliveryBoy(orderId, deliveryBoyData, data.updated_at);
 
     case "REACHED_PICKUP":
-      return await updateDeliveryBoyStatus(orderId, currentStatus);
+      return await updateDeliveryBoyStatus(
+        orderId,
+        currentStatus,
+        data.updated_at
+      );
 
     case "PICKED_UP":
-      return await updateDeliveryBoyStatus(orderId, currentStatus);
+      return await updateDeliveryBoyStatus(
+        orderId,
+        currentStatus,
+        data.updated_at
+      );
 
     case "OUT_FOR_DELIVERY":
       return await updateOrderStatus(orderId, "OUT FOR DELIVERY");
 
     case "REACHED_DELIVERY":
-      return await updateDeliveryBoyStatus(orderId, currentStatus);
+      return await updateDeliveryBoyStatus(
+        orderId,
+        currentStatus,
+        data.updated_at
+      );
 
     case "DELIVERED":
       return await updateOrderDelivered(orderId);
