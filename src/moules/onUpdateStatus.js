@@ -17,7 +17,7 @@ class DbUpdateStatus {
           changedData?.deliveryBoy?.name ?? ""
         }###${changedData?.deliveryBoy?.last_updated_on ?? ""}###${
           changedData?.kitchen?.status ?? ""
-        }\n\n`;
+        }###${changedData?.deliveryBoy?.id ?? ""}\n\n`;
         console.log(message);
 
         this._clients.forEach((client) => client.write(message));

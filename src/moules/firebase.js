@@ -11,12 +11,12 @@ async function updateOrderStatus(orderId, status) {
   }
 }
 
-async function updateDeliveryBoyStatus(orderId, status, last_updated_on) {
+async function updateDeliveryBoyStatus(orderId, id, status, last_updated_on) {
   try {
     console.log("update delivery boy status", orderId, status);
     await db
       .ref(`/orders/${orderId}/deliveryBoy`)
-      .update({ status, last_updated_on });
+      .update({ status, last_updated_on, id });
     return true;
   } catch (err) {
     console.log(err);
