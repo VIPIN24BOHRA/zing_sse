@@ -2,15 +2,16 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
+require("./config.js")
 const { db } = require("./src/moules/db.js");
 const { DbUpdateStatus } = require("./src/moules/onUpdateStatus.js");
 const { pidgeDeliveryBoyEventHandler } = require("./src/moules/deliveryBoy.js");
+const ProducerClient = require("./src/moules/produce.js");
 
 app.use(cors());
 app.use(express.json());
 
 const _dbUpdate = new DbUpdateStatus();
-_dbUpdate._init(db);
 
 console.log("new changes for allow origin all");
 
@@ -66,6 +67,16 @@ app.get("/sse", (req, res) => {
 });
 
 const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+
+(async () => {
+  console.log("connecting to client");
+  await ProducerClient.connect();
+
+  console.log("producer succesfully connected");
+
+  _dbUpdate._init(db, ProducerClient.handleCashpoint);
+
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+})();

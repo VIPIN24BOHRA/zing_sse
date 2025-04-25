@@ -2,7 +2,7 @@ class DbUpdateStatus {
   _orderRef;
   _clients;
 
-  _init(db) {
+  _init(db, handleCashpoint) {
     console.log("this will be called only once");
     this._orderRef = db.ref("/orders");
     this._clients = [];
@@ -21,6 +21,7 @@ class DbUpdateStatus {
         console.log(message);
 
         this._clients.forEach((client) => client.write(message));
+        handleCashpoint(changedKey, changedData);
       } catch (err) {
         console.log("Error while reading on child_changed", err);
       }

@@ -60,15 +60,16 @@ const pidgeDeliveryBoyEventHandler = async (data) => {
       );
 
     case "PICKED_UP":
-      return await updateDeliveryBoyStatus(
-        orderId,
-        id,
-        currentStatus,
-        data.updated_at
-      );
-
-    case "OUT_FOR_DELIVERY":
       return await updateOrderStatus(orderId, "OUT FOR DELIVERY");
+      // return await updateDeliveryBoyStatus(
+      //   orderId,
+      //   id,
+      //   currentStatus,
+      //   data.updated_at
+      // );
+
+    // case "OUT_FOR_DELIVERY":
+    //   return await updateOrderStatus(orderId, "OUT FOR DELIVERY");
 
     case "REACHED_DELIVERY":
       return await updateDeliveryBoyStatus(
